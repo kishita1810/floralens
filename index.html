@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>🌸 FloraLens</title>
+    <style>
+      :root {
+        --cream: #fff8f8;
+        --blush: #f9dde0;
+        --rose: #d4798a;
+        --deep-rose: #b05570;
+        --coral: #e8967a;
+        --petal: #f2b8c0;
+        --soft-pink: #fce8eb;
+        --dark: #3d1a24;
+        --mid: #7a4455;
+        --font-title: "Cormorant Garamond", serif;
+        --font-body: "Lato", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* ── CAMERA ── */
+      #camera-feed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+      }
+
+      /* ── THREE.JS ── */
+      #three-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      /* ── DETECTION ZONE ── */
+      #detection-zone {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 260px;
+        height: 260px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      #detection-zone::before,
+      #detection-zone::after {
+        content: "";
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        border-color: white;
+        border-style: solid;
+        opacity: 0.9;
+        animation: corner-blink 2s ease-in-out infinite;
+      }
+
+      #detection-zone::before {
+        top: 0;
+        left: 0;
+        border-width: 2px 0 0 2px;
+      }
+
+      #detection-zone::after {
+        bottom: 0;
+        right: 0;
+        border-width: 0 2px 2px 0;
+      }
+
+      @keyframes corner-blink {
+        0%,
+        100% {
+          opacity: 0.9;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      .corner {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        border-color: white;
+        border-style: solid;
+        opacity: 0.9;
+        animation: corner-blink 2s ease-in-out infinite;
+      }
+
+      .top-right {
+        top: 0;
+        right: 0;
+        border-width: 2px 2px 0 0;
+      }
+      .bottom-left {
+        bottom: 0;
+        left: 0;
+        border-width: 0 0 2px 2px;
+      }
+
+      /* ── UI LAYER ── */
+      #ui-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      #ui-layer button,
+      #ui-layer #info-card {
+        pointer-events: all;
+      }
+
+      /* ── TOP BAR ── */
+      #top-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 240, 242, 0.6),
+          transparent
+        );
+      }
+
+      #app-title {
+        font-family: var(--font-title);
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: white;
+        letter-spacing: 0.05em;
+        text-shadow: 0 2px 12px rgba(180, 80, 100, 0.3);
+      }
+
+      /* ── STATUS MESSAGE ── */
+      #status-msg {
+        position: absolute;
+        bottom: 150px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        max-width: 80%;
+        font-family: var(--font-body);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-align: center;
+        padding: 14px 24px;
+        white-space: nowrap;
+        border-radius: 40px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+
+      #status-msg.show {
+        opacity: 1;
+      }
+
+      #status-msg.success {
+        color: white;
+        background: var(--rose);
+        box-shadow: 0 4px 20px rgba(180, 80, 110, 0.3);
+      }
+
+      #status-msg.error {
+        color: white;
+        background: var(--deep-rose);
+        box-shadow: 0 4px 20px rgba(150, 60, 80, 0.3);
+      }
+
+      #status-msg.scanning {
+        color: var(--dark);
+        background: var(--blush);
+        box-shadow: 0 4px 16px rgba(200, 150, 160, 0.3);
+      }
+
+      /* ── SCAN BUTTON ── */
+      #scan-btn {
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 18px 44px;
+        background: white;
+        color: var(--deep-rose);
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 24px rgba(180, 80, 110, 0.25);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+
+      #scan-btn:active {
+        transform: translateX(-50%) scale(0.96);
+        box-shadow: 0 2px 10px rgba(180, 80, 110, 0.2);
+      }
+
+      /* ── INFO CARD ── */
+      #info-card {
+        position: absolute;
+        bottom: -700px;
+        left: 12px;
+        right: 12px;
+        background: linear-gradient(160deg, #fce8eb 0%, #fdf0f2 100%);
+        border: 1px solid rgba(212, 121, 138, 0.2);
+        border-radius: 24px 24px 16px 16px;
+        padding: 24px;
+        color: var(--dark);
+        transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 -4px 30px rgba(180, 80, 110, 0.15);
+      }
+
+      #info-card.visible {
+        bottom: 110px;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--blush);
+      }
+
+      #card-emoji {
+        font-size: 2.8rem;
+      }
+
+      #card-colorname {
+        font-family: var(--font-title);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--deep-rose);
+        line-height: 1.1;
+      }
+
+      #card-name {
+        font-family: var(--font-body);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--rose);
+        margin-top: 4px;
+        letter-spacing: 0.05em;
+      }
+
+      #card-family {
+        font-family: var(--font-body);
+        font-size: 0.58rem;
+        color: var(--mid);
+        margin-top: 2px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.7;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(212, 121, 138, 0.2);
+        gap: 16px;
+      }
+
+      .info-label {
+        font-family: var(--font-body);
+        font-size: 0.58rem;
+        color: var(--rose);
+        white-space: nowrap;
+        flex-shrink: 0;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .info-value {
+        font-family: var(--font-body);
+        font-size: 0.78rem;
+        color: var(--mid);
+        text-align: right;
+        line-height: 1.5;
+      }
+
+      #card-fact {
+        margin-top: 16px;
+        padding: 14px 16px;
+        background: rgba(255, 255, 255, 0.6);
+        border-left: 3px solid var(--rose);
+        border-radius: 0 8px 8px 0;
+        font-family: var(--font-title);
+        font-style: italic;
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--dark);
+      }
+
+      #card-fact::before {
+        content: "✦ Did you know";
+        display: block;
+        font-family: var(--font-body);
+        font-style: normal;
+        font-size: 0.55rem;
+        color: var(--rose);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      #close-btn {
+        margin-top: 16px;
+        width: 100%;
+        padding: 14px;
+        background: white;
+        color: var(--deep-rose);
+        font-family: var(--font-body);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: 1px solid rgba(212, 121, 138, 0.3);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      #close-btn:hover {
+        background: var(--rose);
+        color: white;
+        border-color: var(--rose);
+      }
+
+      /* ── START SCREEN ── */
+      #start-screen {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(
+          160deg,
+          #fce8eb 0%,
+          #fdf0f2 50%,
+          #fce8eb 100%
+        );
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: opacity 0.8s ease;
+      }
+
+      #start-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .floating-flowers span {
+        position: absolute;
+        animation: float-flower 8s ease-in-out infinite;
+        opacity: 0.5;
+        font-size: 3rem;
+      }
+
+      .floating-flowers span:nth-child(1) {
+        top: 5%;
+        left: 10%;
+        animation-delay: 0s;
+        font-size: 2rem;
+      }
+      .floating-flowers span:nth-child(2) {
+        top: 15%;
+        right: 8%;
+        animation-delay: 1s;
+        font-size: 1.5rem;
+      }
+      .floating-flowers span:nth-child(3) {
+        top: 30%;
+        left: 5%;
+        animation-delay: 2s;
+        font-size: 2.5rem;
+      }
+      .floating-flowers span:nth-child(4) {
+        top: 50%;
+        right: 5%;
+        animation-delay: 0.5s;
+        font-size: 1.8rem;
+      }
+      .floating-flowers span:nth-child(5) {
+        top: 65%;
+        left: 15%;
+        animation-delay: 3s;
+        font-size: 1.5rem;
+      }
+      .floating-flowers span:nth-child(6) {
+        top: 75%;
+        right: 12%;
+        animation-delay: 1.5s;
+        font-size: 2rem;
+      }
+      .floating-flowers span:nth-child(7) {
+        top: 85%;
+        left: 5%;
+        animation-delay: 2.5s;
+        font-size: 1.2rem;
+      }
+      .floating-flowers span:nth-child(8) {
+        top: 90%;
+        right: 20%;
+        animation-delay: 0.8s;
+        font-size: 1.8rem;
+      }
+      .floating-flowers span:nth-child(9) {
+        top: 40%;
+        left: 85%;
+        animation-delay: 3.5s;
+        font-size: 1.5rem;
+      }
+
+      @keyframes float-flower {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        33% {
+          transform: translateY(-15px) rotate(5deg);
+        }
+        66% {
+          transform: translateY(8px) rotate(-3deg);
+        }
+      }
+
+      .start-content {
+        position: relative;
+        z-index: 1;
+        width: 88%;
+        max-width: 380px;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        padding: 36px 28px;
+        text-align: center;
+        box-shadow: 0 8px 40px rgba(180, 80, 110, 0.15);
+      }
+
+      .start-logo {
+        font-size: 4rem;
+        margin-bottom: 12px;
+        animation: logo-pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes logo-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.06);
+        }
+      }
+
+      .start-title {
+        font-family: var(--font-title);
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        letter-spacing: 0.03em;
+        margin-bottom: 6px;
+      }
+
+      .start-subtitle {
+        font-family: var(--font-body);
+        font-size: 0.68rem;
+        color: var(--rose);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .start-divider {
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--blush),
+          transparent
+        );
+        margin: 22px 0;
+      }
+
+      .how-to-title {
+        font-family: var(--font-body);
+        font-size: 0.58rem;
+        color: var(--rose);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      .how-to-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 14px;
+        background: var(--soft-pink);
+        border-left: 2px solid var(--rose);
+        border-radius: 0 8px 8px 0;
+      }
+
+      .step-icon {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+
+      .step-text {
+        font-family: var(--font-body);
+        font-size: 0.78rem;
+        color: var(--mid);
+        line-height: 1.5;
+      }
+
+      #start-btn {
+        margin-top: 8px;
+        width: 100%;
+        padding: 18px;
+        background: var(--rose);
+        color: white;
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(180, 80, 110, 0.3);
+        transition: all 0.2s ease;
+      }
+
+      #start-btn:active {
+        transform: scale(0.97);
+      }
+
+      .start-footer {
+        margin-top: 20px;
+        font-family: var(--font-body);
+        font-size: 0.62rem;
+        color: var(--petal);
+      }
+      /* #debug-panel {
+        position: absolute;
+        top: 80px;
+        left: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #00f5d4;
+        font-family: "Press Start 2P", monospace;
+        font-size: 0.35rem;
+        padding: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 20;
+        line-height: 1.8;
+        pointer-events: none;
+      } */
+      /* ── START SCREEN ── */
+    </style>
+    <!-- Three.js - the 3D engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- TensorFlow.js — the ML engine -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+
+    <!-- MobileNet — pre-trained model that recognizes 1000 objects including flowers -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+    <!-- Pixel art font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- START SCREEN -->
+    <div id="start-screen">
+      <!-- Floating flowers background -->
+      <div class="floating-flowers">
+        <span>🌷</span><span>🌸</span><span>🌺</span> <span>🌼</span
+        ><span>🌻</span><span>🌷</span> <span>🌸</span><span>🌺</span
+        ><span>🌼</span>
+      </div>
+
+      <!-- Main content -->
+      <div class="start-content">
+        <div class="start-logo">🌷</div>
+        <div class="start-title">🌸 FloraLens</div>
+        <div class="start-subtitle">Discover the world of tulips</div>
+
+        <div class="start-divider"></div>
+
+        <div class="how-to-title">HOW TO USE</div>
+
+        <div class="how-to-steps">
+          <div class="step">
+            <div class="step-icon">📱</div>
+            <div class="step-text">Point your camera at a tulip</div>
+          </div>
+          <div class="step">
+            <div class="step-icon">🔍</div>
+            <div class="step-text">Tap SCAN to identify it</div>
+          </div>
+          <div class="step">
+            <div class="step-icon">🌷</div>
+            <div class="step-text">Learn its name, origin and care tips</div>
+          </div>
+          <div class="step">
+            <div class="step-icon">🌱</div>
+            <div class="step-text">6 tulip varieties to discover!</div>
+          </div>
+        </div>
+
+        <div class="start-divider"></div>
+
+        <button id="start-btn">[ START EXPLORING ]</button>
+
+        <div class="start-footer">Made with 🩷 for Ottawa community</div>
+      </div>
+    </div>
+    <!-- The video element that will show your live feed-->
+    <video id="camera-feed" autoplay playsinline muted></video>
+
+    <!-- Three.js will draw 3D objects onto this canvas -->
+    <canvas id="three-canvas"></canvas>
+    <div id="detection-zone">
+      <div class="corner top-right"></div>
+      <div class="corner bottom-left"></div>
+    </div>
+    <div id="ui-layer">
+      <div id="status-msg"></div>
+      <button id="scan-btn">🌷 Scan</button>
+      <!-- <div id="debug-panel"></div> -->
+
+      <div id="info-card">
+        <div class="card-header">
+          <div id="card-emoji">🌷</div>
+          <div>
+            <div id="card-colorname">—</div>
+            <div id="card-name">—</div>
+            <div id="card-family">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-label">ORIGIN</span>
+          <span class="info-value" id="card-origin">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">BLOOM</span>
+          <span class="info-value" id="card-bloom">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">HEIGHT</span>
+          <span class="info-value" id="card-height">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">CARE</span>
+          <span class="info-value" id="card-care">—</span>
+        </div>
+        <div id="card-fact">—</div>
+        <button id="close-btn">Close</button>
+      </div>
+    </div>
+    <script>
+      async function loadTulipData() {
+        const response = await fetch("tulips.json");
+        const data = await response.json();
+        console.log("Tulip database loaded:", data);
+        return data;
+      }
+
+      async function loadMobileNet() {
+        console.log("Loading MobileNet model...");
+        const model = await mobilenet.load();
+        console.log("MobileNet ready!");
+        window.mlModel = model;
+      }
+      //Ask browser for camera access
+      async function startCamera() {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }, //back camera
+          audio: false,
+        });
+        const video = document.getElementById("camera-feed");
+        video.srcObject = stream;
+      }
+
+      function setupThreeJS() {
+        const canvas = document.getElementById("three-canvas");
+
+        //Render - draws the 3D world onto our canvas
+        //alpha: true makes the background transparent so camera show through
+
+        const renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          alpha: true,
+          antialias: true,
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000, 0);
+
+        //Scene - the 3D world container
+        const scene = new THREE.Scene();
+
+        //Camera - our viewpoint
+        //PerspectiveCamera (fieldOfView, aspectRatio, nearClip, farClip)
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000,
+        );
+        camera.position.z = 5;
+
+        //Light - without light, 3D objects appear black
+        const light = new THREE.AmbientLight(0xffffff, 1);
+        scene.add(light);
+
+        //Animation Loop - redraws the scene ~60 timer per second
+        function animate() {
+          requestAnimationFrame(animate);
+
+          //Rotate the sphere a tiny fit every frame
+          if (window.activeSphere) {
+            //spin
+            window.activeSphere.rotation.y += 0.1;
+            // window.activeSphere.rotation.x += 0.005;
+
+            //make it spin in a sin wave pattern
+            window.activeSphere.position.y = Math.sin(Date.now() * 0.002) * 0.5;
+          }
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        return { scene, camera, renderer };
+      }
+
+      function detectColor() {
+        const video = document.getElementById("camera-feed");
+        const canvas = document.createElement("canvas");
+        canvas.width = 100;
+        canvas.height = 100;
+        const ctx = canvas.getContext("2d");
+
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        ctx.drawImage(
+          video,
+          vw * 0.25,
+          vh * 0.25,
+          vw * 0.5,
+          vh * 0.5,
+          0,
+          0,
+          100,
+          100,
+        );
+
+        const pixels = ctx.getImageData(0, 0, 100, 100).data;
+        const vividPixels = [];
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          const [h, s, l] = rgbToHsl(pixels[i], pixels[i + 1], pixels[i + 2]);
+          if (l > 0.1 && l < 0.98) {
+            vividPixels.push({ h: h * 360, s, l });
+          }
+        }
+
+        if (vividPixels.length < 50) return null;
+
+        const avgHue =
+          vividPixels.reduce((sum, p) => sum + p.h, 0) / vividPixels.length;
+        const avgSat =
+          vividPixels.reduce((sum, p) => sum + p.s, 0) / vividPixels.length;
+        const avgLit =
+          vividPixels.reduce((sum, p) => sum + p.l, 0) / vividPixels.length;
+
+        debug(
+          `Hue: ${Math.round(avgHue)}° Sat: ${Math.round(avgSat * 100)}% Light: ${Math.round(avgLit * 100)}%`,
+        );
+
+        // White — check FIRST before anything else
+        // High lightness + low saturation = white
+        if (avgLit > 0.75 && avgSat < 0.25) {
+          debug("Detected: white");
+          return "white";
+        }
+
+        // Must be colorful enough for other colors
+        if (avgSat < 0.2) return null;
+
+        if (avgHue < 15 || avgHue > 345) return "red";
+        if (avgHue >= 15 && avgHue < 40) return "orange";
+        if (avgHue >= 40 && avgHue < 80) return "yellow";
+        if (avgHue >= 240 && avgHue < 300) return "purple";
+        if (avgHue >= 300 && avgHue < 345) return "pink";
+
+        return null;
+      }
+
+      //Helper function converts RGB (0-255) to HSL (0-1)
+      function rgbToHsl(r, g, b) {
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h, s;
+        const l = (max + min) / 2;
+
+        if (max === min) {
+          h = s = 0; //grey = no hue
+        } else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r:
+              h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+              break;
+            case g:
+              h = ((b - r) / d + 2) / 6;
+              break;
+            case b:
+              h = ((r - g) / d + 4) / 6;
+              break;
+          }
+        }
+        return [h, s, l];
+      }
+      async function isFlower() {
+        const video = document.getElementById("camera-feed");
+
+        // Ask MobileNet to classify what it sees in the camera
+        const predictions = await window.mlModel.classify(video);
+
+        // Log all predictions so we can see what MobileNet thinks
+        console.log("MobileNet predictions:", predictions);
+
+        // predictions is an array of 3 guesses, each looks like:
+        // { className: 'pot, flowerpot', probability: 0.43 }
+
+        // Check if any prediction mentions flower-related words
+        const flowerWords = [
+          "flower",
+          "tulip",
+          "plant",
+          "petal",
+          "bloom",
+          "garden",
+          "bouquet",
+          "daisy",
+          "rose",
+        ];
+
+        const flowerMatch = predictions.find((prediction) =>
+          flowerWords.some((word) =>
+            prediction.className.toLowerCase().includes(word),
+          ),
+        );
+
+        if (flowerMatch) {
+          console.log(
+            `Flower detected! "${flowerMatch.className}" with ${Math.round(flowerMatch.probability * 100)}% confidence`,
+          );
+          return true;
+        }
+
+        console.log("No flower detected");
+        return false;
+      }
+      function showInfoCard(item) {
+        // Set text content
+        document.getElementById("card-emoji").textContent = item.emoji;
+        document.getElementById("card-colorname").textContent = item.colorName;
+        document.getElementById("card-name").textContent = item.name;
+        document.getElementById("card-family").textContent = item.family;
+        document.getElementById("card-origin").textContent = item.origin;
+        document.getElementById("card-bloom").textContent = item.bloom;
+        document.getElementById("card-height").textContent = item.height;
+        document.getElementById("card-care").textContent = item.care;
+        document.getElementById("card-fact").textContent = item.fact;
+
+        // Apply dynamic card colors
+        const card = document.getElementById("info-card");
+        card.style.background = item.cardGradient;
+        card.style.borderColor = item.accentColor + "33"; // 33 = 20% opacity in hex
+
+        // Apply accent color to labels, borders, fact box
+        document.querySelectorAll(".info-label").forEach((el) => {
+          el.style.color = item.accentColor;
+        });
+
+        document.querySelectorAll(".info-row").forEach((el) => {
+          el.style.borderBottomColor = item.accentColor + "22";
+        });
+
+        const fact = document.getElementById("card-fact");
+        fact.style.borderLeftColor = item.accentColor;
+
+        document.getElementById("card-colorname").style.color =
+          item.accentColor;
+        document.getElementById("card-family").style.color = item.accentColor;
+        document.getElementById("close-btn").style.color = item.accentColor;
+        document.getElementById("close-btn").style.borderColor =
+          item.accentColor + "44";
+
+        card.classList.add("visible");
+      }
+
+      function hideInfoCard() {
+        document.getElementById("info-card").classList.remove("visible");
+      }
+
+      async function scanObject() {
+        if (!window.mlModel) {
+          showStatus("⏳ MODEL LOADING...", "scanning");
+          return;
+        }
+
+        // Show scanning state immediately when button tapped
+        showStatus("🔍 SCANNING...", "scanning", 0); // 0 = don't auto-hide
+
+        const predictions = await window.mlModel.classify(
+          document.getElementById("camera-feed"),
+          5,
+        );
+
+        debug("Predictions:");
+        predictions.slice(0, 3).forEach((p) => {
+          debug(`${Math.round(p.probability * 100)}% ${p.className}`);
+        });
+
+        let matchedKey = null;
+
+        for (const prediction of predictions) {
+          const words = prediction.className.toLowerCase().split(",");
+          for (const word of words) {
+            const cleaned = word.trim();
+            const dbKey = Object.keys(window.tulipData).find(
+              (key) =>
+                cleaned.includes(key) ||
+                (key === "red" &&
+                  (cleaned.includes("flower") ||
+                    cleaned.includes("tulip") ||
+                    cleaned.includes("rose") ||
+                    cleaned.includes("petal"))) ||
+                (key === "yellow" &&
+                  (cleaned.includes("flower") ||
+                    cleaned.includes("tulip") ||
+                    cleaned.includes("daisy") ||
+                    cleaned.includes("sunflower"))) ||
+                (key === "purple" &&
+                  (cleaned.includes("flower") ||
+                    cleaned.includes("tulip") ||
+                    cleaned.includes("plant"))) ||
+                (key === "white" &&
+                  (cleaned.includes("flower") ||
+                    cleaned.includes("tulip") ||
+                    cleaned.includes("daisy"))) ||
+                (key === "pink" &&
+                  (cleaned.includes("flower") ||
+                    cleaned.includes("tulip") ||
+                    cleaned.includes("rose"))) ||
+                (key === "orange" &&
+                  (cleaned.includes("flower") ||
+                    cleaned.includes("tulip") ||
+                    cleaned.includes("plant"))),
+            );
+
+            if (dbKey && prediction.probability > 0.05) {
+              matchedKey = dbKey;
+              break;
+            }
+          }
+          if (matchedKey) break;
+        }
+
+        if (matchedKey) {
+          showStatus(
+            `✓ ${window.tulipData[matchedKey].name.toUpperCase()} FOUND!`,
+            "success",
+          );
+          showInfoCard(window.tulipData[matchedKey]);
+        } else {
+          showStatus("✗ NO TULIP FOUND — TRY AGAIN", "error");
+        }
+      }
+      function showStatus(message, type, duration = 2500) {
+        const el = document.getElementById("status-msg");
+        el.textContent = message;
+        el.className = `show ${type}`;
+        if (duration > 0) {
+          setTimeout(() => el.classList.remove("show"), duration);
+        }
+      }
+
+      function debug(message) {
+        console.log(message);
+        // const panel = document.getElementById("debug-panel");
+        // const line = document.createElement("div");
+        // line.textContent = `> ${message}`;
+        // panel.appendChild(line);
+        // // Keep only last 8 lines
+        // while (panel.children.length > 8) {
+        //   panel.removeChild(panel.firstChild);
+        // }
+        // // Auto scroll to bottom
+        // panel.scrollTop = panel.scrollHeight;
+      }
+      async function init() {
+        startCamera();
+        const { scene, camera, renderer } = setupThreeJS();
+        // const sphere = addTestSphere(scene);
+        const tulipData = await loadTulipData();
+        window.tulipData = tulipData;
+        // Load ML model
+        await loadMobileNet();
+        // Wire up buttons
+        document
+          .getElementById("scan-btn")
+          .addEventListener("click", scanObject);
+        document
+          .getElementById("close-btn")
+          .addEventListener("click", hideInfoCard);
+        // Start screen button
+        document.getElementById("start-btn").addEventListener("click", () => {
+          const screen = document.getElementById("start-screen");
+          screen.classList.add("hidden");
+          setTimeout(() => screen.remove(), 800);
+        });
+      }
+
+      init();
+
+      //press space bar to test color detection
+      document.addEventListener("keydown", async (e) => {
+        if (e.key === " ") scanObject();
+      });
+    </script>
+  </body>
+</html>

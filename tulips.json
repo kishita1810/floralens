@@ -1,0 +1,80 @@
+{
+  "red": {
+    "colorName": "Red Tulip",
+    "name": "Ile de France",
+    "family": "Triumph",
+    "emoji": "🌹",
+    "cardGradient": "linear-gradient(160deg, #ffe8e8 0%, #ffd0d0 100%)",
+    "accentColor": "#c0405a",
+    "origin": "Netherlands, 1968",
+    "bloom": "Mid-Spring (Apr–May)",
+    "height": "45–50cm",
+    "care": "Full sun, well-drained soil, water weekly",
+    "fact": "One of the most planted tulips at the Ottawa festival. Red tulips symbolize true love — during Tulip Mania in 1637 Holland, a single rare bulb sold for the price of a house."
+  },
+  "yellow": {
+    "colorName": "Yellow Tulip",
+    "name": "Strong Gold",
+    "family": "Triumph",
+    "emoji": "🌻",
+    "cardGradient": "linear-gradient(160deg, #fffbe8 0%, #fff3c0 100%)",
+    "accentColor": "#b8860b",
+    "origin": "Netherlands, 1955",
+    "bloom": "Early-Mid Spring (Apr)",
+    "height": "40–45cm",
+    "care": "Full sun, sandy soil, drought tolerant",
+    "fact": "Yellow tulips represent cheerfulness and sunshine. They were first cultivated in the Ottoman Empire before Dutch traders brought them to Europe in the 1500s."
+  },
+  "purple": {
+    "colorName": "Purple Tulip",
+    "name": "Negrita",
+    "family": "Triumph",
+    "emoji": "💜",
+    "cardGradient": "linear-gradient(160deg, #f3e8ff 0%, #e8d0ff 100%)",
+    "accentColor": "#7b2d8b",
+    "origin": "Netherlands, 1990",
+    "bloom": "Late Spring (May)",
+    "height": "45–50cm",
+    "care": "Partial shade tolerant, rich moist soil",
+    "fact": "Negrita is one of the most award-winning purple tulips in the world. Purple tulips symbolize royalty — they were historically reserved for nobility."
+  },
+  "white": {
+    "colorName": "White Tulip",
+    "name": "Pays Bas",
+    "family": "Single Early",
+    "emoji": "🤍",
+    "cardGradient": "linear-gradient(160deg, #f8f8f8 0%, #efefef 100%)",
+    "accentColor": "#888888",
+    "origin": "Netherlands, 1943",
+    "bloom": "Early Spring (Mar–Apr)",
+    "height": "35–40cm",
+    "care": "Full sun, any well-drained soil",
+    "fact": "White tulips hold special meaning — the Netherlands gifted 100,000 bulbs to Canada in 1945 to thank us for sheltering the Dutch royal family during WW2."
+  },
+  "pink": {
+    "colorName": "Pink Tulip",
+    "name": "Prominence",
+    "family": "Double Early",
+    "emoji": "🌸",
+    "cardGradient": "linear-gradient(160deg, #ffe8f0 0%, #ffd0e0 100%)",
+    "accentColor": "#d4789a",
+    "origin": "Netherlands, 1961",
+    "bloom": "Mid Spring (Apr–May)",
+    "height": "30–35cm",
+    "care": "Full sun, moist fertile soil",
+    "fact": "Double Early tulips are called Peony tulips because their full layered blooms resemble peonies. Pink tulips mean affection and are the most photographed at the festival."
+  },
+  "orange": {
+    "colorName": "Orange Tulip",
+    "name": "Orange Emperor",
+    "family": "Fosteriana",
+    "emoji": "🧡",
+    "cardGradient": "linear-gradient(160deg, #fff0e8 0%, #ffdfc0 100%)",
+    "accentColor": "#c05a20",
+    "origin": "Netherlands, 1962",
+    "bloom": "Early Spring (Mar–Apr)",
+    "height": "40cm",
+    "care": "Full sun, dry to medium soil",
+    "fact": "Orange Emperor is one of the earliest tulips to bloom each spring. Orange tulips represent energy and enthusiasm — they are a favourite of the Dutch royal family."
+  }
+}
