@@ -270,21 +270,18 @@
 
       #card-name {
         font-family: var(--font-body);
-        font-size: 0.78rem;
+        font-size: 0.85rem;
         font-weight: 700;
-        color: var(--rose);
+        color: var(--dark);
         margin-top: 4px;
-        letter-spacing: 0.05em;
       }
 
       #card-family {
         font-family: var(--font-body);
-        font-size: 0.58rem;
+        font-size: 0.72rem;
         color: var(--mid);
         margin-top: 2px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        opacity: 0.7;
+        letter-spacing: 0.05em;
       }
 
       .info-row {
@@ -912,8 +909,9 @@
       function showInfoCard(item) {
         document.getElementById("card-emoji").textContent = item.emoji;
         document.getElementById("card-colorname").textContent = item.colorName;
-        document.getElementById("card-name").textContent = item.name;
-        document.getElementById("card-family").textContent = item.family;
+        document.getElementById("card-name").textContent = "✦ " + item.name;
+        document.getElementById("card-family").textContent =
+          item.family + " Tulip Family";
         document.getElementById("card-didyouknow").textContent =
           item.didYouKnow;
         document.getElementById("card-symbolizes").textContent =
