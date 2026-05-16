@@ -286,11 +286,10 @@
 
       .info-row {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 8px 0;
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px 0;
         border-bottom: 1px solid rgba(212, 121, 138, 0.15);
-        gap: 12px;
       }
 
       .info-label {
@@ -298,20 +297,17 @@
         font-size: 0.55rem;
         font-weight: 700;
         color: var(--rose);
-        white-space: nowrap;
-        flex-shrink: 0;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        padding-top: 2px;
       }
 
       .info-value {
         font-family: var(--font-body);
-        font-size: 0.75rem;
+        font-size: 0.78rem;
         color: var(--dark);
-        text-align: right;
-        line-height: 1.5;
+        line-height: 1.6;
         opacity: 0.85;
+        text-align: left;
       }
 
       #card-fact {
@@ -1057,26 +1053,40 @@
         // panel.scrollTop = panel.scrollHeight;
       }
       async function init() {
+        // Start these in parallel while user reads the start screen
         startCamera();
-        const { scene, camera, renderer } = setupThreeJS();
-        // const sphere = addTestSphere(scene);
-        const tulipData = await loadTulipData();
-        window.tulipData = tulipData;
-        // Load ML model
-        await loadMobileNet();
-        // Wire up buttons
+        window.threeState = setupThreeJS();
+        window.tulipData = await loadTulipData();
+
+        // Start loading MobileNet in background — don't await it yet
+        const modelPromise = loadMobileNet();
+
+        // Wire up start button
+        document
+          .getElementById("start-btn")
+          .addEventListener("click", async () => {
+            const screen = document.getElementById("start-screen");
+
+            // If model isn't ready yet, show loading message on button
+            if (!window.mlModel) {
+              document.getElementById("start-btn").textContent =
+                "[ LOADING MODEL... ]";
+              await modelPromise; // wait for it to finish
+            }
+
+            // Now dismiss the start screen
+            screen.classList.add("hidden");
+            setTimeout(() => screen.remove(), 800);
+            showStatus("POINT AT A TULIP & SCAN 🌷", "success", 4000);
+          });
+
+        // Wire up other buttons
         document
           .getElementById("scan-btn")
           .addEventListener("click", scanObject);
         document
           .getElementById("close-btn")
           .addEventListener("click", hideInfoCard);
-        // Start screen button
-        document.getElementById("start-btn").addEventListener("click", () => {
-          const screen = document.getElementById("start-screen");
-          screen.classList.add("hidden");
-          setTimeout(() => screen.remove(), 800);
-        });
       }
 
       init();
