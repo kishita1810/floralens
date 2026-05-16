@@ -286,24 +286,30 @@
 
       .info-row {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        justify-content: space-between;
+        align-items: flex-start;
         padding: 8px 0;
         border-bottom: 1px solid rgba(212, 121, 138, 0.15);
+        gap: 12px;
       }
 
       .info-label {
         font-family: var(--font-body);
-        font-size: 0.58rem;
+        font-size: 0.55rem;
         font-weight: 700;
-        letter-spacing: 0.1em;
+        color: var(--rose);
+        white-space: nowrap;
+        flex-shrink: 0;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
+        padding-top: 2px;
       }
 
       .info-value {
         font-family: var(--font-body);
         font-size: 0.75rem;
         color: var(--dark);
+        text-align: right;
         line-height: 1.5;
         opacity: 0.85;
       }
@@ -321,6 +327,19 @@
         color: var(--dark);
       }
 
+      #card-fact {
+        margin-top: 12px;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.6);
+        border-left: 3px solid var(--rose);
+        border-radius: 0 8px 8px 0;
+        font-family: var(--font-title);
+        font-style: italic;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--dark);
+      }
+
       #card-fact::before {
         content: "✦ Did you know";
         display: block;
@@ -328,9 +347,10 @@
         font-style: normal;
         font-size: 0.55rem;
         color: var(--rose);
+        font-weight: 700;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
 
       #close-btn {
@@ -679,21 +699,16 @@
         </div>
 
         <div class="info-row">
-          <span class="info-label">✦ DID YOU KNOW</span>
-          <span class="info-value" id="card-didyouknow">—</span>
-        </div>
-
-        <div class="info-row">
           <span class="info-label">🎨 SYMBOLIZES</span>
           <span class="info-value" id="card-symbolizes">—</span>
         </div>
-
         <div class="info-row">
           <span class="info-label">📖 HISTORY</span>
           <span class="info-value" id="card-history">—</span>
         </div>
 
-        <!-- <div id="card-fact">—</div> -->
+        <div id="card-fact" id="card-didyouknow">—</div>
+
         <button id="close-btn">Close</button>
       </div>
     </div>
@@ -912,11 +927,10 @@
         document.getElementById("card-name").textContent = "✦ " + item.name;
         document.getElementById("card-family").textContent =
           item.family + " Tulip Family";
-        document.getElementById("card-didyouknow").textContent =
-          item.didYouKnow;
         document.getElementById("card-symbolizes").textContent =
           item.symbolizes;
         document.getElementById("card-history").textContent = item.history;
+        document.getElementById("card-fact").textContent = item.didYouKnow;
 
         const card = document.getElementById("info-card");
         card.style.background = item.cardGradient;
@@ -931,6 +945,8 @@
         });
 
         document.getElementById("card-colorname").style.color =
+          item.accentColor;
+        document.getElementById("card-fact").style.borderLeftColor =
           item.accentColor;
         document.getElementById("card-family").style.color = item.accentColor;
         document.getElementById("close-btn").style.color = item.accentColor;
