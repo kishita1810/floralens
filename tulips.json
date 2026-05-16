@@ -7,10 +7,9 @@
     "cardGradient": "linear-gradient(160deg, #ffe8e8 0%, #ffd0d0 100%)",
     "accentColor": "#c0405a",
     "origin": "Netherlands, 1968",
-    "bloom": "Mid-Spring (Apr–May)",
-    "height": "45–50cm",
-    "care": "Full sun, well-drained soil, water weekly",
-    "fact": "One of the most planted tulips at the Ottawa festival. Red tulips symbolize true love — during Tulip Mania in 1637 Holland, a single rare bulb sold for the price of a house."
+    "didYouKnow": "A single red tulip bulb once sold for the price of a house in 17th century Amsterdam. People mortgaged their homes just to own one.",
+    "symbolizes": "True love and passion. Giving someone red tulips is a declaration of deep, undying love — stronger than roses in Dutch tradition.",
+    "history": "Red tulips arrived in Europe from the Ottoman Empire in the 1500s. Sultan Suleiman the Magnificent considered them sacred and only royalty could grow them."
   },
   "yellow": {
     "colorName": "Yellow Tulip",
@@ -20,10 +19,9 @@
     "cardGradient": "linear-gradient(160deg, #fffbe8 0%, #fff3c0 100%)",
     "accentColor": "#b8860b",
     "origin": "Netherlands, 1955",
-    "bloom": "Early-Mid Spring (Apr)",
-    "height": "40–45cm",
-    "care": "Full sun, sandy soil, drought tolerant",
-    "fact": "Yellow tulips represent cheerfulness and sunshine. They were first cultivated in the Ottoman Empire before Dutch traders brought them to Europe in the 1500s."
+    "didYouKnow": "Yellow tulips get their colour from carotenoids — the same pigment that makes carrots orange and flamingos pink.",
+    "symbolizes": "Cheerfulness, hope and new beginnings. In Victorian times yellow flowers were sent to wish someone good luck on a new adventure.",
+    "history": "The word tulip comes from the Turkish word for turban — because the flower shape looked like the headwear worn at the Ottoman court in the 1500s."
   },
   "purple": {
     "colorName": "Purple Tulip",
@@ -33,10 +31,9 @@
     "cardGradient": "linear-gradient(160deg, #f3e8ff 0%, #e8d0ff 100%)",
     "accentColor": "#7b2d8b",
     "origin": "Netherlands, 1990",
-    "bloom": "Late Spring (May)",
-    "height": "45–50cm",
-    "care": "Partial shade tolerant, rich moist soil",
-    "fact": "Negrita is one of the most award-winning purple tulips in the world. Purple tulips symbolize royalty — they were historically reserved for nobility."
+    "didYouKnow": "Purple dye was once so rare and expensive that only kings and emperors could afford it. Purple flowers carried the same status symbol.",
+    "symbolizes": "Royalty, admiration and respect. Giving purple tulips means you see someone as truly extraordinary — above ordinary praise.",
+    "history": "Negrita has won more international flower awards than almost any other tulip variety. It was bred specifically to achieve the deepest, richest purple possible."
   },
   "white": {
     "colorName": "White Tulip",
@@ -46,10 +43,9 @@
     "cardGradient": "linear-gradient(160deg, #f8f8f8 0%, #efefef 100%)",
     "accentColor": "#888888",
     "origin": "Netherlands, 1943",
-    "bloom": "Early Spring (Mar–Apr)",
-    "height": "35–40cm",
-    "care": "Full sun, any well-drained soil",
-    "fact": "White tulips hold special meaning — the Netherlands gifted 100,000 bulbs to Canada in 1945 to thank us for sheltering the Dutch royal family during WW2."
+    "didYouKnow": "The Ottawa Tulip Festival exists because of white tulips. In 1945 the Dutch royal family sent 100,000 bulbs to thank Canada for sheltering them during WW2.",
+    "symbolizes": "Forgiveness, purity and new beginnings. In the Netherlands white tulips are given as an apology or as a fresh start between two people.",
+    "history": "Princess Juliana of the Netherlands gave birth to Princess Margriet in Ottawa in 1943. The Canadian government temporarily declared the hospital room Dutch territory so the princess would be Dutch-born."
   },
   "pink": {
     "colorName": "Pink Tulip",
@@ -59,10 +55,9 @@
     "cardGradient": "linear-gradient(160deg, #ffe8f0 0%, #ffd0e0 100%)",
     "accentColor": "#d4789a",
     "origin": "Netherlands, 1961",
-    "bloom": "Mid Spring (Apr–May)",
-    "height": "30–35cm",
-    "care": "Full sun, moist fertile soil",
-    "fact": "Double Early tulips are called Peony tulips because their full layered blooms resemble peonies. Pink tulips mean affection and are the most photographed at the festival."
+    "didYouKnow": "Pink tulips are called Peony tulips because their layered double blooms look almost identical to peonies — people often mix them up at markets.",
+    "symbolizes": "Affection, caring and happiness. Pink tulips say 'I care about you' without the intensity of red — perfect for friends and family.",
+    "history": "Pink is the most photographed tulip colour at the Ottawa festival every year. Prominence was bred to be the perfect photography subject — its petals reflect light evenly in any condition."
   },
   "orange": {
     "colorName": "Orange Tulip",
@@ -73,8 +68,8 @@
     "accentColor": "#c05a20",
     "origin": "Netherlands, 1962",
     "bloom": "Early Spring (Mar–Apr)",
-    "height": "40cm",
-    "care": "Full sun, dry to medium soil",
-    "fact": "Orange Emperor is one of the earliest tulips to bloom each spring. Orange tulips represent energy and enthusiasm — they are a favourite of the Dutch royal family."
+    "didYouKnow": "Orange is the national colour of the Netherlands — named after the Dutch Royal House of Orange. Orange tulips are planted every year near the Dutch embassy worldwide.",
+    "symbolizes": "Energy, enthusiasm and warmth. Orange tulips are given to someone you want to cheer up or celebrate — they are the happiest colour in the tulip world.",
+    "history": "Orange Emperor is one of the first tulips to bloom each spring, often pushing through snow. Dutch growers say if Orange Emperor blooms, winter is officially over."
   }
 }

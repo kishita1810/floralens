@@ -287,29 +287,26 @@
 
       .info-row {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 10px 0;
+        flex-direction: column;
+        gap: 6px;
+        padding: 12px 0;
         border-bottom: 1px solid rgba(212, 121, 138, 0.2);
-        gap: 16px;
       }
 
       .info-label {
         font-family: var(--font-body);
         font-size: 0.58rem;
-        color: var(--rose);
-        white-space: nowrap;
-        flex-shrink: 0;
+        font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
       }
 
       .info-value {
         font-family: var(--font-body);
-        font-size: 0.78rem;
-        color: var(--mid);
-        text-align: right;
-        line-height: 1.5;
+        font-size: 0.82rem;
+        color: var(--dark);
+        line-height: 1.6;
+        opacity: 0.85;
       }
 
       #card-fact {
@@ -681,22 +678,22 @@
             <div id="card-family">—</div>
           </div>
         </div>
+
         <div class="info-row">
-          <span class="info-label">ORIGIN</span>
-          <span class="info-value" id="card-origin">—</span>
+          <span class="info-label">✦ DID YOU KNOW</span>
+          <span class="info-value" id="card-didyouknow">—</span>
         </div>
+
         <div class="info-row">
-          <span class="info-label">BLOOM</span>
-          <span class="info-value" id="card-bloom">—</span>
+          <span class="info-label">🎨 SYMBOLIZES</span>
+          <span class="info-value" id="card-symbolizes">—</span>
         </div>
+
         <div class="info-row">
-          <span class="info-label">HEIGHT</span>
-          <span class="info-value" id="card-height">—</span>
+          <span class="info-label">📖 HISTORY</span>
+          <span class="info-value" id="card-history">—</span>
         </div>
-        <div class="info-row">
-          <span class="info-label">CARE</span>
-          <span class="info-value" id="card-care">—</span>
-        </div>
+
         <div id="card-fact">—</div>
         <button id="close-btn">Close</button>
       </div>
@@ -911,23 +908,20 @@
         return false;
       }
       function showInfoCard(item) {
-        // Set text content
         document.getElementById("card-emoji").textContent = item.emoji;
         document.getElementById("card-colorname").textContent = item.colorName;
         document.getElementById("card-name").textContent = item.name;
         document.getElementById("card-family").textContent = item.family;
-        document.getElementById("card-origin").textContent = item.origin;
-        document.getElementById("card-bloom").textContent = item.bloom;
-        document.getElementById("card-height").textContent = item.height;
-        document.getElementById("card-care").textContent = item.care;
-        document.getElementById("card-fact").textContent = item.fact;
+        document.getElementById("card-didyouknow").textContent =
+          item.didYouKnow;
+        document.getElementById("card-symbolizes").textContent =
+          item.symbolizes;
+        document.getElementById("card-history").textContent = item.history;
 
-        // Apply dynamic card colors
         const card = document.getElementById("info-card");
         card.style.background = item.cardGradient;
-        card.style.borderColor = item.accentColor + "33"; // 33 = 20% opacity in hex
+        card.style.borderColor = item.accentColor + "33";
 
-        // Apply accent color to labels, borders, fact box
         document.querySelectorAll(".info-label").forEach((el) => {
           el.style.color = item.accentColor;
         });
@@ -935,9 +929,6 @@
         document.querySelectorAll(".info-row").forEach((el) => {
           el.style.borderBottomColor = item.accentColor + "22";
         });
-
-        const fact = document.getElementById("card-fact");
-        fact.style.borderLeftColor = item.accentColor;
 
         document.getElementById("card-colorname").style.color =
           item.accentColor;
